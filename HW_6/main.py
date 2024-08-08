@@ -1,31 +1,26 @@
 import datetime
-
 import uvicorn
-from fastapi import FastAPI, HTTPException  # Чтобы вернуть клиенту HTTP-ответы с ошибками
+from fastapi import FastAPI, HTTPException
 import database as db
 import models
-from typing import List   # можно типировать целые листы типа List[int]
+from typing import List
 from random import randint
 
+app = FastAPI()
 
-app = FastAPI()  # создаем приложение
 
-
-@app.get('/')   # создаем декоратор  получения стартовой страницы с выводом словаря
+@app.get('/')
 def root():
     return {'Message': "Final Task"}
 
 
-@app.get('/fake_users/{count}')    # создание юзеров с добавлением в конце ко всем числа
-async def create_users(count: int):  # в асинхронной функции
+@app.get('/fake_users/{count}')
+async def create_users(count: int):
     for i in range(count):
         query = db.users.insert().values(name=f'users{i}', surname=f'surname{i}',
                                          email=f'email{i}@yandex.ru', password=f'qwerty{i}')
-        await db.database.execute(query)    # await. Он говорит интерпретатору примерно следующее: "я тут возможно
-        # немного потуплю, но ты меня не жди — пусть выполняется другой код, а когда у меня будет настроение
-        # продолжиться, я тебе маякну"
-    return {'message': f'{count} fake users create'}  # execute функция базы данны для выполнения команды( т.е
-    # говорит выполни то, что сверху query
+        await db.database.execute(query)
+    return {'message': f'{count} fake users create'}
 
 
 @app.get('/fake_products/{count}')
@@ -45,9 +40,7 @@ async def create_orders(count: int):
     return {'message': f'{count} fake orders create'}
 
 
-@app.get("/users/", response_model=List[models.UserRead])  # response_modelполучает тот же тип, который вы бы
-# объявили для поля модели Pydantic, поэтому это может быть модель Pydantic, но также может быть, например,
-# listмодель Pydantic, например List[Item]
+@app.get("/users/", response_model=List[models.UserRead])
 async def read_users():
     query = db.users.select()
     return await db.database.fetch_all(query)
@@ -65,15 +58,12 @@ async def read_orders():
     return await db.database.fetch_all(query)
 
 
-# Чтение одного юзера, продукта и заказа
-
 @app.get("/users/{user_id}", response_model=models.UserRead)
 async def read_user(user_id: int):
-    query = db.users.select().where(db.users.c.id == user_id) # ИЗ базы данных колонка c
+    query = db.users.select().where(db.users.c.id == user_id)
     user = await db.database.fetch_one(query)
     if user is None:
-        raise HTTPException(status_code=404, detail="User not found")  # если такого персонажа нет,выкидываем ошибку,
-        # иначе возвращаем его
+        raise HTTPException(status_code=404, detail="User not found")
     return user
 
 
@@ -95,8 +85,6 @@ async def read_order(order_id: int):
     return order
 
 
-# замена юзера, продукта и заказа по id
-
 @app.put("/users/{user_id}", response_model=models.UserRead)
 async def update_user(user_id: int, new_user: models.UserCreate):
     query = db.users.update().where(db.users.c.id == user_id).values(**new_user.dict())
@@ -117,8 +105,6 @@ async def update_order(order_id: int, new_order: models.OrderCreate):
     await db.database.execute(query)
     return {**new_order.dict(), "id": order_id}
 
-
-# удаление
 
 @app.delete("/users/{user_id}")
 async def delete_user(user_id: int):

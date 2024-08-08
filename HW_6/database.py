@@ -4,7 +4,7 @@ import aiosqlite
 import uvicorn
 from fastapi import FastAPI
 
-DATABASE_URL = "sqlite:///my_database.db"  # создание в той же директории моей базы данных
+DATABASE_URL = "sqlite:///my_database.db"
 database = databases.Database(DATABASE_URL)
 metadata = sqlalchemy.MetaData()
 
