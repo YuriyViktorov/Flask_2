@@ -28,7 +28,7 @@ async def create_users(count: int):  # в асинхронной функции
     # говорит выполни то, что сверху query
 
 
-@app.get('fake_products/{count}')
+@app.get('/fake_products/{count}')
 async def create_products(count: int):
     for i in range(count):
         query = db.users.insert().values(title=f'product {i}', description=f'about product{i}', price=randint(1, 10000))
