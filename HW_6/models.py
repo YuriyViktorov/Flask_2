@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, Field  # Field это то, как мы будем проверять наше поле
+from pydantic import BaseModel, Field
 
 
 class UserCreate(BaseModel):
@@ -21,7 +21,6 @@ class ProductCreate(BaseModel):
 
 class ProductRead(ProductCreate):
     id: int
-
 
 
 class OrderCreate(BaseModel):
