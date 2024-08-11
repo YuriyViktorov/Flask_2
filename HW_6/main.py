@@ -40,19 +40,19 @@ async def create_orders(count: int):
     return {'message': f'{count} fake orders create'}
 
 
-@app.get("/users/", response_model=List[models.UserRead])
+@app.get("/users", response_model=List[models.UserRead])
 async def read_users():
     query = db.users.select()
     return await db.database.fetch_all(query)
 
 
-@app.get("/products/", response_model=List[models.ProductRead])
+@app.get("/products", response_model=List[models.ProductRead])
 async def read_products():
     query = db.products.select()
     return await db.database.fetch_all(query)
 
 
-@app.get("/orders/", response_model=List[models.OrderRead])
+@app.get("/orders", response_model=List[models.OrderRead])
 async def read_orders():
     query = db.orders.select()
     return await db.database.fetch_all(query)

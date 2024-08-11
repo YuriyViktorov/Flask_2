@@ -1,8 +1,6 @@
 import databases
 import sqlalchemy
-import aiosqlite
-import uvicorn
-from fastapi import FastAPI
+
 
 DATABASE_URL = "sqlite:///my_database.db"
 database = databases.Database(DATABASE_URL)
@@ -32,6 +30,6 @@ orders = sqlalchemy.Table("orders", metadata,
                           )
 
 engine = sqlalchemy.create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}   # создаем движок енжин и передаем в базу данных
+    DATABASE_URL, connect_args={"check_same_thread": False}
 )
 metadata.create_all(engine)
